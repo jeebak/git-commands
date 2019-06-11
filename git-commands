@@ -10,16 +10,18 @@
 help_options='-a'
 # https://github.com/git/git/blob/b697d92f/Documentation/RelNotes/2.20.0.txt#L17-L18
 git help --no-verbose > /dev/null 2>&1 && help_options='--no-verbose -a'
+# Retrieve the git help, only once
+# shellcheck disable=SC2086
+git_help_all=$(git help $help_options)
 
 ################ Preparation ################
 # The line that divides the whole text into two: regular and custom commands
-# shellcheck disable=SC2086
-dividing_line_number=$(git help $help_options |
-	grep -n "git commands available from elsewhere on your \$PATH" |
-	sed 's/[^0-9]*//g')
+dividing_line_number=$(
+	grep -n "git commands available from elsewhere on your \$PATH" \
+		<<< "$git_help_all" | sed 's/[^0-9]*//g'
+)
 
-# shellcheck disable=SC2086
-whole_line_number=$(git help $help_options | wc -l)
+whole_line_number=$(wc -l <<< "$git_help_all")
 
 # shellcheck disable=SC2034
 black="$(tput setaf 0)"
@@ -40,9 +42,7 @@ reset="$(tput sgr0)"
 
 ############# Child Functions ###############
 function native_commands() {
-	# shellcheck disable=SC2086
-	git help $help_options |
-		head -n "$dividing_line_number" |
+	head -n "$dividing_line_number" <<< "$git_help_all" |
 		grep "^  [a-z]" |
 		tr ' ' '\n' |
 		grep -v "^$" |
@@ -52,9 +52,7 @@ function native_commands() {
 }
 
 function custom_commands() {
-	# shellcheck disable=SC2086
-	git help $help_options |
-		tail -n $((whole_line_number - dividing_line_number)) |
+	tail -n $((whole_line_number - dividing_line_number)) <<< "$git_help_all" |
 		grep "^  [a-z]" |
 		tr ' ' '\n' |
 		grep -v "^$" |
