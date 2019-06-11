@@ -6,13 +6,20 @@
 # git help -a
 #     Ref: https://stackoverflow.com/questions/7866353/git-list-all-available-commands
 
+###### Ensure Correct git help options ######
+help_options='-a'
+# https://github.com/git/git/blob/b697d92f/Documentation/RelNotes/2.20.0.txt#L17-L18
+git help --no-verbose > /dev/null 2>&1 && help_options='--no-verbose -a'
+
 ################ Preparation ################
 # The line that divides the whole text into two: regular and custom commands
-dividing_line_number=$(git help -a |
+# shellcheck disable=SC2086
+dividing_line_number=$(git help $help_options |
 	grep -n "git commands available from elsewhere on your \$PATH" |
 	sed 's/[^0-9]*//g')
 
-whole_line_number=$(git help -a | wc -l)
+# shellcheck disable=SC2086
+whole_line_number=$(git help $help_options | wc -l)
 
 # shellcheck disable=SC2034
 black="$(tput setaf 0)"
@@ -33,7 +40,8 @@ reset="$(tput sgr0)"
 
 ############# Child Functions ###############
 function native_commands() {
-	git help -a |
+	# shellcheck disable=SC2086
+	git help $help_options |
 		head -n "$dividing_line_number" |
 		grep "^  [a-z]" |
 		tr ' ' '\n' |
@@ -44,7 +52,8 @@ function native_commands() {
 }
 
 function custom_commands() {
-	git help -a |
+	# shellcheck disable=SC2086
+	git help $help_options |
 		tail -n $((whole_line_number - dividing_line_number)) |
 		grep "^  [a-z]" |
 		tr ' ' '\n' |
@@ -86,7 +95,8 @@ function main() {
 	else
 		# shellcheck disable=SC2016
 		echo -e "${blue}"'`fzf` is not detected on $PATH, defaulting to `git help -a` '"${reset}\n"
-		git help -a
+		# shellcheck disable=SC2086
+		git help $help_options
 
 	fi
 }
