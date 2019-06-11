@@ -69,7 +69,9 @@ function main() {
 	# If fzf exists
 	if type fzf >/dev/null 2>&1; then
 
-		_help_preview="man git-{} || {echo '\n*****************************' && git-{} -h}"
+		_help_preview="COLUMNS=$(( $(tput cols) * 3/4 )) git help git-{} || {
+			echo '\n*****************************' && git-{} -h
+		}"
 		result=$(
 			echo -e "$list" |
 				fzf --ansi --reverse --height=90% --cycle \
