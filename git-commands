@@ -67,7 +67,7 @@ function all_commands() {
 
 ################ Main ################
 function main() {
-	list=$("$1" |
+	list=$("${1:-all_commands}" |
 		# -u: unique key to prevent duplicates
 		# -k: sort only after the specified character, after 6th character on 1st field
 		#     Ref: https://unix.stackexchange.com/questions/157923/sorting-strings-with-ansi-escape-codes
