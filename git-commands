@@ -77,7 +77,8 @@ function main() {
 	if type fzf >/dev/null 2>&1; then
 
 		_help_preview="COLUMNS=$(( $(tput cols) * 3/4 )) git help git-{} || {
-			echo '\n*****************************' && git-{} -h
+			echo '\n*****************************' &&
+			(cd /tmp && git-{} -h 2> /dev/null)
 		}"
 		result=$(
 			echo -e "$list" |
