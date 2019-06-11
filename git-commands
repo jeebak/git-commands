@@ -75,6 +75,7 @@ function main() {
 		result=$(
 			echo -e "$list" |
 				fzf --ansi --reverse --height=90% --cycle \
+					--bind "alt-j:preview-down,alt-k:preview-up,ctrl-f:preview-page-down,ctrl-b:preview-page-up" \
 					--preview="$_help_preview" \
 					--preview-window=right:75%
 		)
@@ -100,7 +101,14 @@ where:
 	-h  show this help text
 	-n  list only the native git commands
 	-c  list only the custom git commands
-	-a  list all commands, which is also default"
+	-a  list all commands, which is also default
+
+Preview window keybindings:
+	alt-j:preview-down
+	alt-k:preview-up
+	ctrl-f:preview-page-down
+	ctrl-b:preview-page-up
+"
 
 ############# Parse options ##############
 while getopts ':hnca:' option; do
